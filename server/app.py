@@ -17,7 +17,33 @@ db.init_app(app)
 api = Api(app)
 
 class Home(Resource):
-    pass
+    def get(self):
+        response_dict = {
+            'message': 'welcome to the newsletter API'
+        }
+        response = make_response(
+            response_dict,200
+        )
+        return response
+
+class Newsletters(Resource):
+    def get(self):
+        response_dict  = [n.to_dict() for n in Newsletter.query.all()]
+        response =make_response(
+            response_dict, 200
+        )
+        return response
+
+class NewsletterByID(Resource):
+       def get(self,id):
+            response_dict = Newsletter.query.filter_by(id =id).first().to_dict()
+            response =make_response(response_dict,200)
+            return response
+
+api.add_resource(Home,'/')
+api.add_resource(Newsletters, '/newsletters')
+api.add_resource(NewsletterByID,'/newsletters/<int:id>')
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
